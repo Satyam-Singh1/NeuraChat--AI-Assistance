@@ -155,7 +155,7 @@ export default function ChatUI() {
         }}
       ></div>
 
-      <div className="flex flex-col max-w-4xl mx-auto h-full relative z-10 px-4">
+      <div className="flex flex-col w-3xl mx-auto h-full relative z-10 px-4">
         {/* Header */}
         <header className="flex items-center justify-between py-6 border-b border-gray-700/30 backdrop-blur-sm">
           <div className="flex items-center space-x-4">
