@@ -70,9 +70,22 @@ export async function generate(userMessage, threadId) {
   
   if (phoneDetection.detected) {
     // Create a special response for phone number detection
+    let responseContent = `📱 **Phone number detected:** ${phoneDetection.formatted}\n\n`;
+    
+    // Add extraction details if available
+    if (phoneDetection.extractedFrom) {
+      responseContent += `✨ ${phoneDetection.extractedFrom}\n\n`;
+    }
+    
+    if (phoneDetection.note) {
+      responseContent += `ℹ️ Note: ${phoneDetection.note}\n\n`;
+    }
+    
+    responseContent += `I can see you've shared a phone number. How would you like me to assist you with this? I can help with:\n• Formatting verification\n• Information about the number\n• Or any other related queries you might have.`;
+    
     const phoneResponse = {
       role: 'assistant',
-      content: `📱 Phone number detected: ${phoneDetection.formatted}\n\nI can see you've shared a phone number. How would you like me to assist you with this? I can help with:\n• Formatting verification\n• Information about the number\n• Or any other related queries you might have.`
+      content: responseContent
     };
     
     // Add user message and phone detection response to conversation
