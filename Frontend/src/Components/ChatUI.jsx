@@ -80,13 +80,20 @@ export default function ChatUI() {
 
   const callServer = async (inputText) => {
     // Simulated API call - replace with your actual endpoint
-    const response = await fetch("https://neurachat-ai-assistance.onrender.com/chat", {
+    const response = await fetch("http://localhost:3000/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ message: inputText, threadId }),
     });
+    // const response = await fetch("https://neurachat-ai-assistance.onrender.com/chat", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({ message: inputText, threadId }),
+    // });
 
     if (!response.ok) {
       throw new Error("Error in generating the response");

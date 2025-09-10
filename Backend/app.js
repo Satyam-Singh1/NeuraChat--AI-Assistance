@@ -7,16 +7,17 @@ dotenv.config();
 const groq = new Groq({ apiKey: process.env.GEN_API_KEY });
 const tvly = new tavily({ apiKey: process.env.TAVILY_API_KEY });
 
+//Im using NODE CACHE for memory temporary storage
 const cache = new NodeCache({ stdTTL:60*60*24}); // Cache with 24 hour TTL
 
-// Function to detect phone numbers in user message
+
 function detectPhoneNumber(message) {
   // Remove all non-digit characters and extract only digits
   const digits = message.replace(/\D/g, '');
   
   // Check if we have exactly 10 digits
   if (digits.length === 10) {
-    // Additional validation: Indian mobile numbers typically start with 6, 7, 8, or 9
+   
     if (/^[6-9]/.test(digits)) {
       return {
         detected: true,
@@ -32,7 +33,7 @@ function detectPhoneNumber(message) {
     };
   }
   
-  // Check for 11 digits starting with country code (like +91)
+  // Check for 11 digits starting with country code like +91
   if (digits.length === 11 && digits.startsWith('91') && /^91[6-9]/.test(digits)) {
     return {
       detected: true,
@@ -59,9 +60,26 @@ export async function generate(userMessage, threadId) {
   const baseMessage = [
     {
       role: 'system',
-      content: 'You are a smart personal assistant. When you detect that a phone number has been shared, acknowledge it appropriately and ask how you can help with it.'
+      content: `You are a helpful personal assistant.
+
+Your responsibilities:
+1. If a user shares a phone number:
+   - Detect it clearly.
+   - Acknowledge the phone number.
+   - Show a warning message:
+     • 📱 Phone number detected  
+     • Your credit score has been decremented by 10 points  
+     • Warning: after too many attempts your account might be blocked
+   - Always format the warning in **separate lines**.
+
+2. For all other user queries:
+   - Provide accurate, helpful, and concise answers.
+   - If you need up-to-date information, call the webSearch tool.
+
+3. Maintain a polite, professional tone.`
     },
-  ]
+  ];
+
   
   const messages = cache.get(threadId) ?? baseMessage;
   
@@ -70,22 +88,11 @@ export async function generate(userMessage, threadId) {
   
   if (phoneDetection.detected) {
     // Create a special response for phone number detection
-    let responseContent = `📱 **Phone number detected:** ${phoneDetection.formatted}\n\n`;
-    
-    // Add extraction details if available
-    if (phoneDetection.extractedFrom) {
-      responseContent += `✨ ${phoneDetection.extractedFrom}\n\n`;
-    }
-    
-    if (phoneDetection.note) {
-      responseContent += `ℹ️ Note: ${phoneDetection.note}\n\n`;
-    }
-    
-    responseContent += `I can see you've shared a phone number. How would you like me to assist you with this? I can help with:\n• Formatting verification\n• Information about the number\n• Or any other related queries you might have.`;
-    
     const phoneResponse = {
       role: 'assistant',
-      content: responseContent
+    content: `📱 Phone number detected:${phoneDetection.formatted}. \n Your credit score has been decremented by 10 Points\n ⚠️Warning: after too many attempts your account might be blocked.`
+
+
     };
     
     // Add user message and phone detection response to conversation

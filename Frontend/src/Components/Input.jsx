@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 
 // Input Component
 export function Input({ handleMessageSent }) {
@@ -32,7 +32,7 @@ export function Input({ handleMessageSent }) {
             placeholder="Enter your message..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
-            onKeyPress={handleKeyPress}
+            
             className="w-full resize-none bg-transparent text-white placeholder-gray-400 outline-none text-sm leading-relaxed max-h-32 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent"
             style={{ minHeight: '24px' }}
           />

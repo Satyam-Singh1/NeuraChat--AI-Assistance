@@ -3,15 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "start": "node Server.js",
-  "dev": "nodemon Server.js"
-},
+  "scripts": {
+    "start": "node Server.js",
+    "dev": "nodemon Server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@tavily/core": "^0.5.11",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
