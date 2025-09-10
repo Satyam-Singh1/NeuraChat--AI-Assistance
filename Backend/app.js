@@ -56,10 +56,8 @@ if (digits.length === 12 && digits.startsWith('91') && /^[6-9]/.test(digits[2]))
   return { detected: false };
 }
 
-// ============================================
-// APPROACH 2: SLIDING WINDOW ALGORITHM
-// ============================================
 
+// APPROACH 2: SLIDING WINDOW ALGORITHM
 function detectPhoneNumber2(message) {
   const digits = [];
   let i = 0;
