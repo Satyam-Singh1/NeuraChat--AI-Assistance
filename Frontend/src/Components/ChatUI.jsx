@@ -174,9 +174,9 @@ export default function ChatUI() {
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                
+                Num Guard
               </h1>
-              <p className="text-xs text-gray-400">AI Assistant • Online</p>
+              <p className="text-xs text-gray-400">Watching you.. • Online</p>
             </div>
           </div>
           
