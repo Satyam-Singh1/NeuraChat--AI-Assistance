@@ -80,20 +80,20 @@ export default function ChatUI() {
 
   const callServer = async (inputText) => {
     // Simulated API call - replace with your actual endpoint
-    const response = await fetch("http://localhost:3000/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message: inputText, threadId }),
-    });
-    // const response = await fetch("https://neurachat-ai-assistance.onrender.com/chat", {
+    // const response = await fetch("http://localhost:3000/chat", {
     //   method: "POST",
     //   headers: {
     //     "Content-Type": "application/json",
     //   },
     //   body: JSON.stringify({ message: inputText, threadId }),
     // });
+    const response = await fetch("https://neurachat-ai-assistance.onrender.com/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: inputText, threadId }),
+    });
 
     if (!response.ok) {
       throw new Error("Error in generating the response");
@@ -174,7 +174,7 @@ export default function ChatUI() {
             </div>
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Neural Chat Interface
+                
               </h1>
               <p className="text-xs text-gray-400">AI Assistant • Online</p>
             </div>

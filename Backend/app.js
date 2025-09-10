@@ -14,45 +14,84 @@ const cache = new NodeCache({ stdTTL:60*60*24}); // Cache with 24 hour TTL
 function detectPhoneNumber(message) {
   // Remove all non-digit characters and extract only digits
   const digits = message.replace(/\D/g, '');
-  
-  // Check if we have exactly 10 digits
-  if (digits.length === 10) {
-   
-    if (/^[6-9]/.test(digits)) {
-      return {
-        detected: true,
-        number: digits,
-        formatted: `${digits.slice(0, 5)} ${digits.slice(5)}`
-      };
-    }
-    // If it's 10 digits but doesn't follow Indian format, still consider it a phone number
+
+  // Case 1: 10-digit number
+  if (digits.length <= 10 && digits.length >=9) {
     return {
       detected: true,
       number: digits,
-      formatted: `${digits.slice(0, 5)} ${digits.slice(5)}`
+      formatted: `${digits.slice(0, 5)} ${digits.slice(5)}`,
+      method: 'direct_10'
     };
   }
-  
-  // Check for 11 digits starting with country code like +91
-  if (digits.length === 11 && digits.startsWith('91') && /^91[6-9]/.test(digits)) {
-    return {
-      detected: true,
-      number: digits.slice(2), // Remove country code
-      formatted: `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`,
-      withCountryCode: true
-    };
+
+// Case 2: 11 digits with leading 0 (e.g., 09876543210)
+if (digits.length === 11 && digits.startsWith('0') && /^[6-9]/.test(digits[1])) {
+  return {
+    detected: true,
+    number: digits.slice(1), // remove leading 0
+    formatted: `${digits.slice(1, 6)} ${digits.slice(6)}`,
+    method: 'leading_0'
+  };
+}
+
+// Case 3: 12 digits with country code (e.g., 919876543210)
+if (digits.length === 12 && digits.startsWith('91') && /^[6-9]/.test(digits[2])) {
+  return {
+    detected: true,
+    number: digits.slice(2),
+    formatted: `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`,
+    withCountryCode: true,
+    method: 'country_code_12'
+  };
+}
+
+
+  // Case 4: Sliding window approach
+  const slidingWindowApproachResult = detectPhoneNumber2(message);
+  if (slidingWindowApproachResult.detected) {
+    return slidingWindowApproachResult; // return full object instead of collapsing
   }
-  
-  // Check for 12 digits with country code like 919876543210
-  if (digits.length === 12 && digits.startsWith('91') && /^91[6-9]/.test(digits)) {
-    return {
-      detected: true,
-      number: digits.slice(2),
-      formatted: `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`,
-      withCountryCode: true
-    };
+
+  return { detected: false };
+}
+
+// ============================================
+// APPROACH 2: SLIDING WINDOW ALGORITHM
+// ============================================
+
+function detectPhoneNumber2(message) {
+  const digits = [];
+  let i = 0;
+
+  // Extract digits while maintaining position info
+  for (let char of message) {
+    if (/\d/.test(char)) {
+      digits.push({ digit: char, position: i });
+    }
+    i++;
   }
-  
+
+  // If less than 10 digits, no valid phone number
+  if (digits.length < 10) return { detected: false };
+
+  // Sliding window approach
+  for (let start = 0; start <= digits.length - 10; start++) {
+    const window = digits.slice(start, start + 10);
+    const numberStr = window.map(d => d.digit).join('');
+
+    // Check if valid Indian mobile number
+    if (/^[6-9]/.test(numberStr)) {
+      return {
+        detected: true,
+        number: numberStr,
+        formatted: `${numberStr.slice(0, 5)} ${numberStr.slice(5)}`,
+        method: 'sliding_window',
+        positions: window.map(d => d.position)
+      };
+    }
+  }
+
   return { detected: false };
 }
 
